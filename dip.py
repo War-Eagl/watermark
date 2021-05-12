@@ -104,27 +104,43 @@ def read_images(value):
   img = Image.open(value)
   opencvImage = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
   return opencvImage
-
-image = st.file_uploader("Upload Image",accept_multiple_files=False)
-if image:
-    image = read_images(image)
-#st.write(image)
-#st.write(type(image))
-watermark = st.file_uploader("Upload Watermark",accept_multiple_files=False)
-if watermark:
-    watermark = read_images(watermark)
-method = st.radio('Choose a method',['Visible','Invisible'])
-alpha = st.slider("Select Alpha", min_value=0.0,max_value=1.0,step=0.01)
-position = st.selectbox('Position of watermark',
-            ['center','top right','top left', 'bottom left','bottom right'])
-if st.button("Insert"):
-    if np.any(image) and np.any(watermark):
-        if method == 'Visible':
-            g = visible_insertion(image, watermark,alpha,position)
-            img_g = Image.fromarray(g)
-            st.image(img_g)
-        elif method == "Invisible":
-            st.write('The Key is:')
-            st.write(str(invisible_insertion(image,watermark)))
-    else:
-        st.write("Insert both Image and Watermark")
+sidebar = st.sidebar.selectbox("Insertion or Extraction",options=['Insert Watermark', "Extract Invisible Watermark"])
+if sidebar == "Insert Watermark":
+  image = st.file_uploader("Upload Image",accept_multiple_files=False)
+  if image:
+      image = read_images(image)
+  #st.write(image)
+  #st.write(type(image))
+  watermark = st.file_uploader("Upload Watermark",accept_multiple_files=False)
+  if watermark:
+      watermark = read_images(watermark)
+  method = st.radio('Choose a method',['Visible','Invisible'])
+  if method == "Visible":
+    alpha = st.slider("Select Alpha", min_value=0.0,max_value=1.0,step=0.01)
+    position = st.selectbox('Position of watermark',
+              ['center','top right','top left', 'bottom left','bottom right'])
+  if st.button("Insert"):
+      if np.any(image) and np.any(watermark):
+          if method == 'Visible':
+              g = visible_insertion(image, watermark,alpha,position)
+              img_g = Image.fromarray(g)
+              st.image(img_g)
+          elif method == "Invisible":
+              st.write('The Key is:')
+              st.write(str(list(invisible_insertion(image,watermark))))
+      else:
+          st.write("Insert both Image and Watermark")
+elif sidebar == "Extract Invisible Watermark":
+  image2 = st.file_uploader("Upload Image",accept_multiple_files=False)
+  if image2:
+    image2 = read_images(image2)
+  key = st.text_area("Insert the key")
+  if key:
+    key = key.split(',')
+    keys = [int(x) for x in key]
+    keys = np.array(keys)
+  if st.button("Extract"):
+    watermark = invisible_extract(image2,keys)
+    watermark = Image.fromarray(watermark)
+    watermark = watermark.convert('L')
+    st.image(watermark)
