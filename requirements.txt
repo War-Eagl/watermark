@@ -1,6 +1,6 @@
 anyio==3.0.1
 appmode==0.8.0
-3argon2-cffi 
+#3argon2-cffi 
 async-generator
 attrs 
 backcall
