@@ -50,7 +50,7 @@ def invisible_extract(image,key):
   C = np.array([0])
   R = np.array([0])
   watermark = np.zeros((m,n))
-  for i in range(2,len(k)-1,2):
+  for i in range(2,len(key)-1,2):
     if i == 2:
       C[0] = int(key[i])
       R[0] = int(key[i+1])
@@ -136,10 +136,10 @@ elif sidebar == "Extract Invisible Watermark":
   key = st.text_area("Insert the key")
   if key:
     key = key.split(',')
-    keys = [int(x) for x in key]
+    keys = [int(float(x)) for x in key]
     keys = np.array(keys)
   if st.button("Extract"):
     watermark = invisible_extract(image2,keys)
     watermark = Image.fromarray(watermark)
     watermark = watermark.convert('L')
-    st.image(watermark)
+    st.image(watermark,width=300)
