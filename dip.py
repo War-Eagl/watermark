@@ -33,15 +33,14 @@ def search(pixel,f,w):
 def invisible_insertion(f,w):
   L = np.array([]) 
   ht,wt = w.shape
-  for l in range(wt):
-    for p in range(ht):
-      p = search(w[p,l],f,w)
+  for l in range(ht-1):
+    for p in range(wt-1):
+      p = search(w[l,p],f,w)
       L = np.append(L,p)
   Key = np.array([])
   Key = np.append(Key,ht)
   Key = np.append(Key,wt)
   Key = np.append(Key,L)
-  Key = Key.astype(int)
   return Key
 
 def invisible_extract(image,key):
@@ -51,7 +50,7 @@ def invisible_extract(image,key):
   C = np.array([0])
   R = np.array([0])
   watermark = np.zeros((m,n))
-  for i in range(2,len(key)-1,2):
+  for i in range(2,len(k)-1,2):
     if i == 2:
       C[0] = int(key[i])
       R[0] = int(key[i+1])
@@ -62,9 +61,9 @@ def invisible_extract(image,key):
     for j in range(n-1):
       watermark[i,j] = image[C[v],R[v]]
       v = v+1
-  watermark = cv2.flip(watermark,0)
-  M = cv2.getRotationMatrix2D((m/2, n/2), -90, 1.0)
-  watermark = cv2.warpAffine(watermark, M, (m, n))
+  #watermark = cv2.flip(watermark,0)
+  #M = cv2.getRotationMatrix2D((m/2, n/2), -180, 1.0)
+  #watermark = cv2.warpAffine(watermark, M, (m, n))
   return watermark
 
 def visible_insertion(f,w,alpha,position = 'center'):
